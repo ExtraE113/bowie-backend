@@ -29,3 +29,8 @@ def donate_endpoint(request):
 				get_square_customer_id_from_id_token(id_token)
 			)
 		)
+
+
+def hello_world(request):
+	return "here"
+

@@ -2,8 +2,10 @@ CacheControl==0.12.6
 cachetools==4.1.0
 certifi==2020.6.20
 chardet==3.0.4
+click==7.1.2
 deprecation==2.1.0
 firebase-admin==4.3.0
+Flask==1.1.2
 google-api-core==1.21.0
 google-api-python-client==1.9.3
 google-auth==1.18.0
@@ -16,7 +18,10 @@ googleapis-common-protos==1.52.0
 grpcio==1.30.0
 httplib2==0.18.1
 idna==2.9
+itsdangerous==1.1.0
+Jinja2==2.11.2
 jsonpickle==0.9.6
+MarkupSafe==1.1.1
 msgpack==1.0.0
 packaging==20.4
 protobuf==3.12.2
@@ -31,3 +36,4 @@ six==1.15.0
 squareup==6.0.0.20200625
 uritemplate==3.0.1
 urllib3==1.25.9
+Werkzeug==1.0.1
