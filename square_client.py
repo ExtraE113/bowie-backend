@@ -1,12 +1,12 @@
 import json
 from collections import namedtuple
 from uuid import uuid4
+import secret
 
 from square.client import Client
 import os
 
-
-SQUARE_APPLICATION_TOKEN = os.getenv('SQUARE_APPLICATION_TOKEN')
+SQUARE_APPLICATION_TOKEN = secret.square_application_token()
 assert SQUARE_APPLICATION_TOKEN is not None
 client = Client(
 	environment="sandbox",
@@ -41,18 +41,11 @@ def get_customers(given_name: str = None, family_name: str = None, email_address
 	return existing_customers
 
 
-def store_card_on_file(nonce: str, given_name: str = None, family_name: str = None, email_address: str = None):
-	customers = get_customers(given_name=given_name, family_name=family_name, email_address=email_address).text
-	customers = json.loads(customers, object_hook=lambda d: namedtuple('customers_x', d.keys())(*d.values())).customers
-	print(customers)
-	if len(customers) == 0:
-		raise ValueError("No customer found with given params, so no card could be stored")
-	if len(customers) > 1:
-		raise ValueError("Something has gone wrong, as multiple customers exist with that combination of params")
-	if len(customers) == 1:
-		body = {'card_nonce': nonce}
-		customer_id = customers[0].id
-		result = customers_api.create_customer_card(customer_id, body)
+def store_card_on_file(nonce: str, customer):
+	body = {'card_nonce': nonce}
+	customer_id = customer.id
+	result = customers_api.create_customer_card(customer_id, body)
+	return result
 
 
 def donate(customer=None):
@@ -69,9 +62,9 @@ def donate(customer=None):
 	result = payments_api.create_payment(body)
 
 	if result.is_success():
-		print(result.body)
+		return result.body
 	elif result.is_error():
-		print(result.errors)
+		return result.errors
 
 
 def get_square_customer_by_id(customer_id: str):
