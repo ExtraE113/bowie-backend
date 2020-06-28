@@ -8,11 +8,12 @@ import square_client
 import secret
 
 app = firebase_admin.initialize_app(credential=secret.google_credential())
+# app = firebase_admin.initialize_app()
 client = firebase_admin.firestore.client()
 
 
 def _get_uid_from_id_token(id_token: str):
-	decoded_token = firebase_admin.auth.verify_id_token(id_token)
+	decoded_token = firebase_admin.auth.verify_id_token(id_token, check_revoked=True)
 	return decoded_token['uid']
 
 
@@ -39,3 +40,12 @@ def _update_square_customer_id_by_uid(uid: str, new_square_customer_id):
 def update_square_customer_id_by_id_token(id_token: str, new_square_customer_id):
 	uid: str = _get_uid_from_id_token(id_token)
 	return _update_square_customer_id_by_uid(uid=uid, new_square_customer_id=new_square_customer_id)
+
+
+def _get_user_from_uid(uid: str):
+	return firebase_admin.auth.get_user(uid)
+
+
+def get_user_from_id_token(id_token: str):
+	uid = _get_uid_from_id_token(id_token)
+	return _get_user_from_uid(uid)

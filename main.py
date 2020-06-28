@@ -79,6 +79,7 @@ def store_square_customer_id(request):
 	return google_square_integration_utils.update_square_customer_id_by_id_token(id_token=id_token,
 																				 new_square_customer_id=square_customer_id)
 
+
 # class Request:
 # 	@staticmethod
 # 	def get_json():
@@ -88,3 +89,17 @@ def store_square_customer_id(request):
 # 			"square_customer_id": "hello"}
 #
 # 	args = False
+
+def create_customer(request):
+	# todo idempotency
+	id_token = None
+	request_json = request.get_json()
+	if request.args and 'token' in request.args:
+		id_token = request.args.get('token')
+	elif request_json and 'token' in request_json:
+		id_token = request_json['token']
+
+	if id_token is None:
+		return "error: no token supplied"
+
+	return square_client.create_customer(email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)

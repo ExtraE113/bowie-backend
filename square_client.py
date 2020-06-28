@@ -18,12 +18,10 @@ payments_api = client.payments
 
 
 def create_customer(given_name: str, family_name: str, email_address: str):
-	if customer_already_exists(given_name=given_name, family_name=family_name, email_address=email_address):
-		print("customer already exists")
-	else:
-		body = {'given_name': given_name, 'family_name': family_name, 'email_address': email_address}
-
-		result = customers_api.create_customer(body)
+	# todo check if customer already exists
+	body = {'email_address': email_address}
+	result = customers_api.create_customer(body)
+	return result
 
 
 # doesn't work fixme
