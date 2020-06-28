@@ -28,7 +28,7 @@ def get_square_customer_id_from_id_token(id_token: str):
 
 
 def get_square_customer_from_id_token(id_token: str):
-	square_customer_id = get_square_customer_from_id_token(id_token)
+	square_customer_id = get_square_customer_id_from_id_token(id_token)
 	return square_client.get_square_customer_by_id(square_customer_id)
 
 
