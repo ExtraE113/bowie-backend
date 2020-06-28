@@ -56,6 +56,7 @@ def add_cof(request):
 
 
 def store_square_customer_id(request):
+	print(request)
 	# todo idempotency
 	id_token = None
 	request_json = request.get_json()
