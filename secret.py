@@ -1,5 +1,7 @@
 import json
 import os
+
+from firebase_admin.credentials import Certificate
 from google.cloud import secretmanager
 
 client = secretmanager.SecretManagerServiceClient()
@@ -22,4 +24,4 @@ def square_application_token():
 
 
 def google_credential():
-    return google_secret_dict
+    return Certificate(google_secret_dict)
