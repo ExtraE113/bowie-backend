@@ -10,7 +10,7 @@ square_resource_name = f"projects/{project_id}/secrets/{square_secret}/versions/
 response = client.access_secret_version(square_resource_name)
 square_secret_string = response.payload.data.decode('UTF-8')
 
-google_secret = "square_application_token"
+google_secret = "firebase_admin_skd"
 google_resource_name = f"projects/{project_id}/secrets/{google_secret}/versions/latest"
 response = client.access_secret_version(google_resource_name)
 google_secret_string = response.payload.data.decode('UTF-8')
