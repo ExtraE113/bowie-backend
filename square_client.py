@@ -4,7 +4,6 @@ from uuid import uuid4
 import secret
 
 from square.client import Client
-import os
 
 SQUARE_APPLICATION_TOKEN = secret.square_application_token()
 assert SQUARE_APPLICATION_TOKEN is not None
@@ -17,11 +16,11 @@ customers_api = client.customers
 payments_api = client.payments
 
 
-def create_customer(given_name: str, family_name: str, email_address: str):
+def create_customer(given_name: str = None, family_name: str = None, email_address: str = None):
 	# todo check if customer already exists
 	body = {'email_address': email_address}
-	result = customers_api.create_customer(body)
-	return result
+	result = customers_api.create_customer(body).body
+	return result["customer"]
 
 
 # doesn't work fixme
@@ -39,10 +38,9 @@ def get_customers(given_name: str = None, family_name: str = None, email_address
 	return existing_customers
 
 
-def store_card_on_file(nonce: str, customer):
+def store_card_on_file(nonce: str, customer_id):
 	body = {'card_nonce': nonce}
-	customer_id = customer.id
-	result = customers_api.create_customer_card(customer_id, body)
+	result = customers_api.create_customer_card(customer_id, body).body
 	return result
 
 
@@ -66,7 +64,6 @@ def donate(customer=None):
 
 
 def get_square_customer_by_id(customer_id: str):
-	customer = customers_api.retrieve_customer(customer_id).text
-	customer = json.loads(customer, object_hook=lambda d: namedtuple('customers_x', d.keys())(*d.values()))[0]
-
+	customer = customers_api.retrieve_customer(customer_id).text  # todo what if I do .body instea of .text? do I still need the blackmagic below?
+	customer = json.loads(customer, object_hook=lambda d: namedtuple('customers_x', d.keys())(*d.values()))[0][0]
 	return customer

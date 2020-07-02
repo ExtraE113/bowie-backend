@@ -8,7 +8,6 @@ import square_client
 import secret
 
 app = firebase_admin.initialize_app(credential=secret.google_credential())
-# app = firebase_admin.initialize_app()
 client = firebase_admin.firestore.client()
 
 
@@ -19,7 +18,11 @@ def _get_uid_from_id_token(id_token: str):
 
 def _get_square_customer_id_from_uid(uid: str):
 	doc_ref: DocumentReference = client.document(f'users/{uid}')
-	return doc_ref.get().to_dict()["square_customer_id"]
+	try:
+		return doc_ref.get().to_dict()["square_customer_id"]
+	except:
+		print("howdy")
+		return None
 
 
 def get_square_customer_id_from_id_token(id_token: str):
@@ -33,12 +36,18 @@ def get_square_customer_from_id_token(id_token: str):
 
 
 def _update_square_customer_id_by_uid(uid: str, new_square_customer_id):
+	print("here2")
 	doc_ref: DocumentReference = client.document(f'users/{uid}')
-	return doc_ref.set(document_data={'square_customer_id': new_square_customer_id}, merge=True)
+	print("here3")
+	result = doc_ref.set(document_data={'square_customer_id': new_square_customer_id}, merge=True)
+	print("here4")
+	return result
 
 
 def update_square_customer_id_by_id_token(id_token: str, new_square_customer_id):
+	print("here1")
 	uid: str = _get_uid_from_id_token(id_token)
+	print("here1.1")
 	return _update_square_customer_id_by_uid(uid=uid, new_square_customer_id=new_square_customer_id)
 
 
