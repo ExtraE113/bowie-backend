@@ -46,7 +46,7 @@ def store_card_on_file(nonce: str, customer_id):
 
 def donate(customer=None):
 	body = dict()
-
+	print(customer)
 	body['source_id'] = customer.cards[0][0]
 	body['idempotency_key'] = str(uuid4())[:44]
 	body['amount_money'] = {}
@@ -65,5 +65,5 @@ def donate(customer=None):
 
 def get_square_customer_by_id(customer_id: str):
 	customer = customers_api.retrieve_customer(customer_id).text  # todo what if I do .body instea of .text? do I still need the blackmagic below?
-	customer = json.loads(customer, object_hook=lambda d: namedtuple('customers_x', d.keys())(*d.values()))[0][0]
+	customer = json.loads(customer, object_hook=lambda d: namedtuple('customers_x', d.keys())(*d.values()))[0]
 	return customer
