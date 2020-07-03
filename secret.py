@@ -4,7 +4,7 @@ import os
 from firebase_admin.credentials import Certificate
 from google.cloud import secretmanager
 
-if os.getenv("BOWIE-BACKEND-DEBUG") is None:
+if os.getenv("BOWIE-BACKEND-DEBUG") is None:  # ie if the env var isn't set
 	client = secretmanager.SecretManagerServiceClient()
 	project_id = os.environ["GCP_PROJECT"]
 

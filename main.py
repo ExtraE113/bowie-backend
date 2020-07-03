@@ -2,6 +2,7 @@ import square_client
 import google_square_integration_utils
 
 
+# hit this endpoint to donate
 def donate_endpoint(request):
 	# todo idempotency
 	"""Responds to any HTTP request.
@@ -38,6 +39,8 @@ def donate_endpoint(request):
 			return "Donating with a nonce is not yet supported"  # todo
 
 
+# hit this endpoint to store a card on file with a nonce.
+# creates a square customer if the user doesn't already have one stored
 # todo test- is this even working?
 def add_cof(request):
 	# todo idempotency
