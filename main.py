@@ -73,4 +73,7 @@ def add_cof(request):
 		customer_id = result["id"]
 
 	square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
+
+	google_square_integration_utils.update_has_cof_by_id_token(id_token, True)
+
 	return str(google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id))

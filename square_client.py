@@ -20,6 +20,7 @@ def create_customer(given_name: str = None, family_name: str = None, email_addre
 	# todo check if customer already exists
 	body = {'email_address': email_address}
 	result = customers_api.create_customer(body).body
+	print(email_address)
 	return result["customer"]
 
 

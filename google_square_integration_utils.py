@@ -17,7 +17,7 @@ def _get_uid_from_id_token(id_token: str):
 
 
 def _get_square_customer_id_from_uid(uid: str):
-	doc_ref: DocumentReference = client.document(f'users/{uid}')
+	doc_ref: DocumentReference = client.document(f'user-secrets/{uid}')
 	try:
 		return doc_ref.get().to_dict()["square_customer_id"]
 	except:
@@ -58,3 +58,14 @@ def _get_user_from_uid(uid: str):
 def get_user_from_id_token(id_token: str):
 	uid = _get_uid_from_id_token(id_token)
 	return _get_user_from_uid(uid)
+
+
+def _update_has_cof_by_uid(uid: str, has_cof: bool = True):
+	doc_ref: DocumentReference = client.document(f'users/{uid}')
+	result = doc_ref.set(document_data={'has_cof': has_cof}, merge=True)
+	return result
+
+
+def update_has_cof_by_id_token(id_token: str, has_cof: bool = True):
+	uid: str = _get_uid_from_id_token(id_token)
+	_update_has_cof_by_uid(uid, has_cof)
