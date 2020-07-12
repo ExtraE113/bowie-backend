@@ -6,7 +6,7 @@ Bowie is a single-tap mobile donation application for the [Alemeda County Commun
 
 1. Clone the project
 
-2. Run `pip install -r requirements.txt` to install dependencies
+2. Run `pip3 install -r requirements.txt` to install dependencies
 
 3. For local testing, set the following environment variables. Either set them to your own values or, for trusted contributors, contact [ExtraE113](https://github.com/ExtraE113) for the information.
 
