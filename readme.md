@@ -12,10 +12,10 @@ Bowie is a single-tap mobile donation application for the [Alemeda County Commun
 
 |Variable | Value |
 |---------|-------|
-|`APPLICATION_CREDENTIALS`| Path to the firebase admin SDK credentials (`.json`). |
+|`GOOGLE_APPLICATION_CREDENTIALS`| Path to the firebase admin SDK credentials (`.json`). |
 |`SQUARE_APPLICATION_ID`| The square application id. Can be accessed from the square developer dashboard. Should be the sandbox id because production deployments should use the secret manager for GCP.|
 |`SQUARE_APPLICATION_TOKEN`| Above, but the token instead of the ID. |
-|`BOWIE-BACKEND-DEBUG`| Set to any non-empty string in local testing or debug environments, although it is good form to set to `True`. Should not be set in production.|
+|`BOWIE_BACKEND_DEBUG`| Set to any non-empty string in local testing or debug environments, although it is good form to set to `True`. Should not be set in production.|
 
 
 
