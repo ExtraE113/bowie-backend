@@ -1,23 +1,7 @@
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
-  args:
-    — functions
-  — deploy
-  — — runtime=python3
-  — — trigger-http
-  — — source=./ # Function source files
-  — — entry-point=donate_endpoint # Function entry point
-  — donate_endpoint # Function name
-  waitFor: ['_']
-  id: 'deploying-donate_endpoint'
+    args: ['functions', 'deploy', 'donate_endpoint', '--trigger-http', '--runtime', 'python37', '--entry-point', 'donate_endpoint']
+    dir: 'function/dir/from/repo/root'
   - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-    — functions
-    — deploy
-    — — runtime=python3
-    — — trigger-http
-    — — source=./ # Function source files
-    — — entry-point=add_cof # Function entry point
-    — add_cof # Function name
-    waitFor: ['_']
-    id: 'deploying-add_cof'
+    args: ['functions', 'deploy', 'add_cof', '--trigger-http', '--runtime', 'python37', '--entry-point', 'add_cof']
+    dir: 'function/dir/from/repo/root'
