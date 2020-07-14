@@ -1,0 +1,23 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+  args:
+    — functions
+  — deploy
+  — — runtime=python3
+  — — trigger-http
+  — — source=./ # Function source files
+  — — entry-point=donate_endpoint # Function entry point
+  — donate_endpoint # Function name
+  waitFor: ['_']
+  id: 'deploying-donate_endpoint'
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+    — functions
+    — deploy
+    — — runtime=python3
+    — — trigger-http
+    — — source=./ # Function source files
+    — — entry-point=add_cof # Function entry point
+    — add_cof # Function name
+    waitFor: ['_']
+    id: 'deploying-add_cof'
