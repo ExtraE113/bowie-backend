@@ -68,7 +68,8 @@ def add_cof(request):
 	print(customer_id)
 	if customer_id is None:
 		print("here")
-		result = square_client.create_customer(email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
+		result = square_client.create_customer(
+			email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
 		print(result)
 		customer_id = result["id"]
 
