@@ -28,11 +28,22 @@ def donate_endpoint(request):
 	elif request_json and 'nonce' in request_json:
 		id_token = request_json['nonce']
 
+	cents = None
+	request_json = request.get_json()
+	if request.args and 'cents' in request.args:
+		cents = int(request.args.get('cents'))
+	elif request_json and 'cents' in request_json:
+		cents = int(request_json['cents'])
+
+	if cents is None:
+		return "error: cents is mandatory"
+
 	if id_token is None and nonce is None:
 		return "error: neither id_token nor nonce supplied"
 	else:
 		if id_token is not None:
 			return str(square_client.donate(
+				cents,
 				google_square_integration_utils.get_square_customer_from_id_token(id_token)
 			))
 		elif nonce is not None:

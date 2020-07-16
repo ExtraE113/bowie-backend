@@ -20,6 +20,7 @@ def create_customer(given_name: str = None, family_name: str = None, email_addre
 	# todo check if customer already exists
 	body = {'email_address': email_address}
 	result = customers_api.create_customer(body).body
+	print(result)
 	return result["customer"]
 
 
@@ -44,13 +45,13 @@ def store_card_on_file(nonce: str, customer_id):
 	return result
 
 
-def donate(customer=None):
+def donate(cents: int, customer=None):
 	body = dict()
 	print(customer)
 	body['source_id'] = customer.cards[0][0]
 	body['idempotency_key'] = str(uuid4())[:44]
 	body['amount_money'] = {}
-	body['amount_money']['amount'] = 200
+	body['amount_money']['amount'] = cents
 	body['amount_money']['currency'] = 'USD'
 	body['autocomplete'] = True
 	body['customer_id'] = customer.id
