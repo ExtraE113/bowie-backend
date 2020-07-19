@@ -77,6 +77,8 @@ def add_cof(request):
 		if nonce is None:
 			return "error: no nonce supplied"
 
+		global customer_id
+
 		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
 		print(customer_id)
 		if customer_id is None:
