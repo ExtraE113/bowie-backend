@@ -55,6 +55,7 @@ def donate_endpoint(request):
 # todo test- is this even working?
 def add_cof(request):
 	try:
+		print("should be logged...?")
 		# todo idempotency
 		# todo if there is already
 		id_token = None
