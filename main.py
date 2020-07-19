@@ -54,7 +54,6 @@ def donate_endpoint(request):
 # creates a square customer if the user doesn't already have one stored
 # todo test- is this even working?
 def add_cof(request):
-	return "starts"
 	try:
 		print("should be logged...?")
 		# todo idempotency
@@ -80,6 +79,7 @@ def add_cof(request):
 
 
 		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
+		return "got to line 82"
 		print(customer_id)
 		if customer_id is None:
 			print("here")
