@@ -79,7 +79,6 @@ def add_cof(request):
 
 
 		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
-		return "got to line 82"
 		print(customer_id)
 		if customer_id is None:
 			print("here")
