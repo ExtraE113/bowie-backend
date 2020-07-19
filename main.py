@@ -1,5 +1,5 @@
 import square_client
-import google_square_integration_utils
+# import google_square_integration_utils
 
 
 # hit this endpoint to donate
