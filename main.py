@@ -79,14 +79,14 @@ def add_cof(request):
 
 
 		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
-		print(customer_id)
 		if customer_id is None:
-			print("here")
+			print("No customer_id saved. Creating a new customer...")
 			result = square_client.create_customer(
 				email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
 			print(result)
 			customer_id = result["id"]
 		square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
-		return str(google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id))
+		google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id)
+		return str(google_square_integration_utils.update_cards_by_id_token(id_token))
 	except BaseException as e:
 		print(e)
