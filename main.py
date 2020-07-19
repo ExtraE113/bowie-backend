@@ -85,7 +85,7 @@ def add_cof(request):
 				email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
 			print(result)
 			customer_id = result["id"]
-
+		return "got to line 88"
 		square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
 		return str(google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id))
 	except BaseException as e:
