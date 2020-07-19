@@ -54,7 +54,7 @@ def donate_endpoint(request):
 # creates a square customer if the user doesn't already have one stored
 # todo test- is this even working?
 def add_cof(request):
-	return "started"
+	return "start"
 	try:
 		print("should be logged...?")
 		# todo idempotency
