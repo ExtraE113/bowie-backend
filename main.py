@@ -1,4 +1,4 @@
-import square_client
+# import square_client
 # import google_square_integration_utils
 
 
