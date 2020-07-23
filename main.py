@@ -1,3 +1,5 @@
+import datetime
+
 import square_client
 import google_square_integration_utils
 
@@ -21,13 +23,6 @@ def donate_endpoint(request):
 	elif request_json and 'token' in request_json:
 		id_token = request_json['token']
 
-	nonce = None
-	request_json = request.get_json()
-	if request.args and 'nonce' in request.args:
-		id_token = request.args.get('nonce')
-	elif request_json and 'nonce' in request_json:
-		id_token = request_json['nonce']
-
 	cents = None
 	request_json = request.get_json()
 	if request.args and 'cents' in request.args:
@@ -36,18 +31,39 @@ def donate_endpoint(request):
 		cents = int(request_json['cents'])
 
 	if cents is None:
-		return "error: cents is mandatory"
+		raise ValueError("Cents is required")
 
-	if id_token is None and nonce is None:
-		return "error: neither id_token nor nonce supplied"
+	if id_token is None:
+		raise ValueError("Id token is required")
 	else:
-		if id_token is not None:
-			return str(square_client.donate(
+		if google_square_integration_utils.is_default_card_valid_by_id_token(id_token):
+			out = square_client.donate(
 				cents,
-				google_square_integration_utils.get_square_customer_from_id_token(id_token)
-			))
-		elif nonce is not None:
-			return "Donating with a nonce is not yet supported"  # todo
+				google_square_integration_utils.get_square_customer_from_id_token(id_token),
+				google_square_integration_utils.get_default_card_by_id_token(id_token)
+			)
+			out = {
+				"payment": {
+					"total_money": {
+						"amount": [out["payment"]["total_money"]["amount"]],
+						"currency": [out["payment"]["total_money"]["currency"]]
+					},
+					"card_details": {
+						"card": {
+							"card_brand": out["payment"]["card_details"]["card"]["card_brand"],
+							"card_type": out["payment"]["card_details"]["card"]["card_type"],
+							"exp_month": out["payment"]["card_details"]["card"]["exp_month"],
+							"exp_year": out["payment"]["card_details"]["card"]["exp_year"],
+							"last_4": out["payment"]["card_details"]["card"]["last_4"],
+						}
+					}
+				},
+				"time": datetime.datetime.now()
+			}
+			google_square_integration_utils.update_donate_history_by_id_token(id_token, out)
+			return str(out)
+		else:
+			raise ValueError("Default card is invalid")
 
 
 # hit this endpoint to store a card on file with a nonce.
@@ -76,7 +92,6 @@ def add_cof(request):
 
 		if nonce is None:
 			return "error: no nonce supplied"
-
 
 		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
 		if customer_id is None:
