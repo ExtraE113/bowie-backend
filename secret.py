@@ -4,7 +4,7 @@ import os
 from firebase_admin.credentials import Certificate
 from google.cloud import secretmanager
 
-if os.getenv("BOWIE-BACKEND-DEBUG") is None:  # ie if the env var isn't set
+if os.getenv("BOWIE_BACKEND_DEBUG") is None:  # ie if the env var isn't set
 	client = secretmanager.SecretManagerServiceClient()
 	project_id = os.environ["GCP_PROJECT"]
 
@@ -21,12 +21,12 @@ if os.getenv("BOWIE-BACKEND-DEBUG") is None:  # ie if the env var isn't set
 
 
 def square_application_token():
-	if os.getenv("BOWIE-BACKEND-DEBUG") is not None:
+	if os.getenv("BOWIE_BACKEND_DEBUG") is not None:
 		return os.getenv("SQUARE_APPLICATION_TOKEN")
 	return square_secret_string
 
 
 def google_credential():
-	if os.getenv("BOWIE-BACKEND-DEBUG") is not None:
+	if os.getenv("BOWIE_BACKEND_DEBUG") is not None:
 		return None
 	return Certificate(google_secret_dict)

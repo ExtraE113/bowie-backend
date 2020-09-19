@@ -1,3 +1,5 @@
+import datetime
+
 import square_client
 import google_square_integration_utils
 
@@ -21,59 +23,85 @@ def donate_endpoint(request):
 	elif request_json and 'token' in request_json:
 		id_token = request_json['token']
 
-	nonce = None
+	cents = None
 	request_json = request.get_json()
-	if request.args and 'nonce' in request.args:
-		id_token = request.args.get('nonce')
-	elif request_json and 'nonce' in request_json:
-		id_token = request_json['nonce']
+	if request.args and 'cents' in request.args:
+		cents = int(request.args.get('cents'))
+	elif request_json and 'cents' in request_json:
+		cents = int(request_json['cents'])
 
-	if id_token is None and nonce is None:
-		return "error: neither id_token nor nonce supplied"
+	if cents is None:
+		raise ValueError("Cents is required")
+
+	if id_token is None:
+		raise ValueError("Id token is required")
 	else:
-		if id_token is not None:
-			return str(square_client.donate(
-				google_square_integration_utils.get_square_customer_from_id_token(id_token)
-			))
-		elif nonce is not None:
-			return "Donating with a nonce is not yet supported"  # todo
+		if google_square_integration_utils.is_default_card_valid_by_id_token(id_token):
+			out = square_client.donate(
+				cents,
+				google_square_integration_utils.get_square_customer_from_id_token(id_token),
+				google_square_integration_utils.get_default_card_by_id_token(id_token)
+			)
+			out = {
+				"payment": {
+					"total_money": {
+						"amount": [out["payment"]["total_money"]["amount"]],
+						"currency": [out["payment"]["total_money"]["currency"]]
+					},
+					"card_details": {
+						"card": {
+							"card_brand": out["payment"]["card_details"]["card"]["card_brand"],
+							"card_type": out["payment"]["card_details"]["card"]["card_type"],
+							"exp_month": out["payment"]["card_details"]["card"]["exp_month"],
+							"exp_year": out["payment"]["card_details"]["card"]["exp_year"],
+							"last_4": out["payment"]["card_details"]["card"]["last_4"],
+						}
+					}
+				},
+				"time": datetime.datetime.now()
+			}
+			google_square_integration_utils.update_donate_history_by_id_token(id_token, out)
+			return str(out)
+		else:
+			raise ValueError("Default card is invalid")
 
 
 # hit this endpoint to store a card on file with a nonce.
 # creates a square customer if the user doesn't already have one stored
 # todo test- is this even working?
 def add_cof(request):
-	# todo idempotency
-	# todo if there is already
-	id_token = None
-	request_json = request.get_json()
-	if request.args and 'token' in request.args:
-		id_token = request.args.get('token')
-	elif request_json and 'token' in request_json:
-		id_token = request_json['token']
+	try:
+		print("should be logged...?")
+		# todo idempotency
+		# todo if there is already
+		id_token = None
+		request_json = request.get_json()
+		if request.args and 'token' in request.args:
+			id_token = request.args.get('token')
+		elif request_json and 'token' in request_json:
+			id_token = request_json['token']
 
-	if id_token is None:
-		return "error: no token supplied"
+		if id_token is None:
+			return "error: no token supplied"
 
-	nonce = None
-	if request.args and 'nonce' in request.args:
-		nonce = request.args.get('nonce')
-	elif request_json and 'nonce' in request_json:
-		nonce = request_json['nonce']
+		nonce = None
+		if request.args and 'nonce' in request.args:
+			nonce = request.args.get('nonce')
+		elif request_json and 'nonce' in request_json:
+			nonce = request_json['nonce']
 
-	if nonce is None:
-		return "error: no nonce supplied"
+		if nonce is None:
+			return "error: no nonce supplied"
 
-	customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
-	print(customer_id)
-	if customer_id is None:
-		print("here")
-		result = square_client.create_customer(email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
-		print(result)
-		customer_id = result["id"]
-
-	square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
-
-	google_square_integration_utils.update_has_cof_by_id_token(id_token, True)
-
-	return str(google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id))
+		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
+		if customer_id is None:
+			print("No customer_id saved. Creating a new customer...")
+			result = square_client.create_customer(
+				email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
+			print(result)
+			customer_id = result["id"]
+		square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
+		google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id)
+		return str(google_square_integration_utils.update_cards_by_id_token(id_token))
+	except BaseException as e:
+		print(e)
