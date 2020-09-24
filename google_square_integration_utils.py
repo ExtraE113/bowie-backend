@@ -107,7 +107,8 @@ def _get_default_card_by_uid(uid: str):
 	try:
 		default = doc_ref.get().to_dict()["default_card"]
 	except KeyError:
-		raise ValueError("No default card set")
+		doc_ref = client.document(f'user-readonly/{uid}')
+		default = doc_ref.get().to_dict()["cards"][0]["id"]
 
 	return default
 
