@@ -8,7 +8,7 @@ from square.client import Client
 SQUARE_APPLICATION_TOKEN = secret.square_application_token()
 assert SQUARE_APPLICATION_TOKEN is not None
 client = Client(
-	environment="sandbox",
+	environment="production",
 	access_token=SQUARE_APPLICATION_TOKEN
 
 )
