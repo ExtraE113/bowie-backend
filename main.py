@@ -92,38 +92,42 @@ def donate_endpoint(request):
 # creates a square customer if the user doesn't already have one stored
 # todo test- is this even working?
 def add_cof(request):
-	try:
-		print("should be logged...?")
-		# todo idempotency
-		# todo if there is already
-		id_token = None
-		request_json = request.get_json()
-		if request.args and 'token' in request.args:
-			id_token = request.args.get('token')
-		elif request_json and 'token' in request_json:
-			id_token = request_json['token']
+	print("should be logged...?")
+	# todo idempotency
+	# todo if there is already
+	id_token = None
+	request_json = request.get_json()
+	if request.args and 'token' in request.args:
+		id_token = request.args.get('token')
+	elif request_json and 'token' in request_json:
+		id_token = request_json['token']
 
-		if id_token is None:
-			return "error: no token supplied"
+	if id_token is None:
+		return "error: no token supplied"
 
-		nonce = None
-		if request.args and 'nonce' in request.args:
-			nonce = request.args.get('nonce')
-		elif request_json and 'nonce' in request_json:
-			nonce = request_json['nonce']
+	nonce = None
+	if request.args and 'nonce' in request.args:
+		nonce = request.args.get('nonce')
+	elif request_json and 'nonce' in request_json:
+		nonce = request_json['nonce']
 
-		if nonce is None:
-			return "error: no nonce supplied"
+	if nonce is None:
+		return "error: no nonce supplied"
 
-		customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
-		if customer_id is None:
-			print("No customer_id saved. Creating a new customer...")
-			result = square_client.create_customer(
-				email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
-			print(result)
-			customer_id = result["id"]
-		square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
-		google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id)
-		return str(google_square_integration_utils.update_cards_by_id_token(id_token))
-	except BaseException as e:
-		print(e)
+	customer_id = google_square_integration_utils.get_square_customer_id_from_id_token(id_token)
+	if customer_id is None:
+		print("No customer_id saved. Creating a new customer...")
+		result = square_client.create_customer(
+			email_address=google_square_integration_utils.get_user_from_id_token(id_token).email)
+		print(result)
+		customer_id = result["id"]
+	store_cof_result = square_client.store_card_on_file(nonce=nonce, customer_id=customer_id)
+
+	if "errors" in store_cof_result:
+		return f"Something went wrong, ${store_cof_result['errors'][0]['detail']}", 400
+
+	google_square_integration_utils.update_square_customer_id_by_id_token(id_token, customer_id)
+	out = str(google_square_integration_utils.update_cards_by_id_token(id_token))
+	print(132, end="   |   ")
+	print(out)
+	return out
