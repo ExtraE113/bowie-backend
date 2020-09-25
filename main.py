@@ -37,7 +37,7 @@ def donate_endpoint(request):
 		raise ValueError("Id token is required")
 	else:
 		if google_square_integration_utils.is_default_card_valid_by_id_token(id_token):
-			if google_square_integration_utils.get_uid_from_id_token(id_token) == "LBdNMewpPYUFEqvAEx5UwaiVEXq1":
+			if google_square_integration_utils.get_uid_from_id_token(id_token) == "G6xxqazfKBYRK6gC1r79eKLXesl1":
 				out = {
 					"payment": {
 						"total_money": {
