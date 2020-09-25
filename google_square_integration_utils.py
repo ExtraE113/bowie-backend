@@ -12,7 +12,7 @@ app = firebase_admin.initialize_app(credential=secret.google_credential())
 client = firebase_admin.firestore.client()
 
 
-def _get_uid_from_id_token(id_token: str):
+def get_uid_from_id_token(id_token: str):
 	decoded_token = firebase_admin.auth.verify_id_token(id_token, check_revoked=True)
 	return decoded_token['uid']
 
@@ -27,7 +27,7 @@ def _get_square_customer_id_from_uid(uid: str):
 
 
 def get_square_customer_id_from_id_token(id_token: str):
-	uid: str = _get_uid_from_id_token(id_token)
+	uid: str = get_uid_from_id_token(id_token)
 	return _get_square_customer_id_from_uid(uid)
 
 
@@ -45,7 +45,7 @@ def _update_square_customer_id_by_uid(uid: str, new_square_customer_id):
 
 
 def update_square_customer_id_by_id_token(id_token: str, new_square_customer_id):
-	uid: str = _get_uid_from_id_token(id_token)
+	uid: str = get_uid_from_id_token(id_token)
 	return _update_square_customer_id_by_uid(uid=uid, new_square_customer_id=new_square_customer_id)
 
 
@@ -54,7 +54,7 @@ def _get_user_from_uid(uid: str):
 
 
 def get_user_from_id_token(id_token: str):
-	uid = _get_uid_from_id_token(id_token)
+	uid = get_uid_from_id_token(id_token)
 	return _get_user_from_uid(uid)
 
 
@@ -73,7 +73,7 @@ def _update_cards_by_uid(uid: str):
 
 
 def update_cards_by_id_token(id_token: str):
-	uid: str = _get_uid_from_id_token(id_token)
+	uid: str = get_uid_from_id_token(id_token)
 	return _update_cards_by_uid(uid)
 
 
@@ -97,7 +97,7 @@ def _update_donate_history_by_uid(uid: str, transaction_info: dict):
 
 
 def update_donate_history_by_id_token(id_token: str, transaction_info: dict):
-	uid: str = _get_uid_from_id_token(id_token)
+	uid: str = get_uid_from_id_token(id_token)
 	return _update_donate_history_by_uid(uid, transaction_info)
 
 
@@ -114,7 +114,7 @@ def _get_default_card_by_uid(uid: str):
 
 
 def get_default_card_by_id_token(id_token: str):
-	uid: str = _get_uid_from_id_token(id_token)
+	uid: str = get_uid_from_id_token(id_token)
 	return _get_default_card_by_uid(uid)
 
 
@@ -131,5 +131,5 @@ def _is_default_card_valid_by_uid(uid: str):
 
 
 def is_default_card_valid_by_id_token(id_token: str):
-	uid: str = _get_uid_from_id_token(id_token)
+	uid: str = get_uid_from_id_token(id_token)
 	return _is_default_card_valid_by_uid(uid)

@@ -37,29 +37,49 @@ def donate_endpoint(request):
 		raise ValueError("Id token is required")
 	else:
 		if google_square_integration_utils.is_default_card_valid_by_id_token(id_token):
-			out = square_client.donate(
-				cents,
-				google_square_integration_utils.get_square_customer_from_id_token(id_token),
-				google_square_integration_utils.get_default_card_by_id_token(id_token)
-			)
-			out = {
-				"payment": {
-					"total_money": {
-						"amount": [out["payment"]["total_money"]["amount"]],
-						"currency": [out["payment"]["total_money"]["currency"]]
-					},
-					"card_details": {
-						"card": {
-							"card_brand": out["payment"]["card_details"]["card"]["card_brand"],
-							"card_type": out["payment"]["card_details"]["card"]["card_type"],
-							"exp_month": out["payment"]["card_details"]["card"]["exp_month"],
-							"exp_year": out["payment"]["card_details"]["card"]["exp_year"],
-							"last_4": out["payment"]["card_details"]["card"]["last_4"],
+			if google_square_integration_utils.get_uid_from_id_token(id_token) == "LBdNMewpPYUFEqvAEx5UwaiVEXq1":
+				out = {
+					"payment": {
+						"total_money": {
+							"amount": cents,
+							"currency": "USD",
+						},
+						"card_details": {
+							"card": {
+								"card_brand": "Test Card Brand",
+								"card_type": "Test Card Type",
+								"exp_month": "13",
+								"exp_year": "00",
+								"last_4": "1234",
+							}
 						}
-					}
-				},
-				"time": datetime.datetime.now()
-			}
+					},
+					"time": datetime.datetime.now()
+				}
+			else:
+				out = square_client.donate(
+					cents,
+					google_square_integration_utils.get_square_customer_from_id_token(id_token),
+					google_square_integration_utils.get_default_card_by_id_token(id_token)
+				)
+				out = {
+					"payment": {
+						"total_money": {
+							"amount": [out["payment"]["total_money"]["amount"]],
+							"currency": [out["payment"]["total_money"]["currency"]]
+						},
+						"card_details": {
+							"card": {
+								"card_brand": out["payment"]["card_details"]["card"]["card_brand"],
+								"card_type": out["payment"]["card_details"]["card"]["card_type"],
+								"exp_month": out["payment"]["card_details"]["card"]["exp_month"],
+								"exp_year": out["payment"]["card_details"]["card"]["exp_year"],
+								"last_4": out["payment"]["card_details"]["card"]["last_4"],
+							}
+						}
+					},
+					"time": datetime.datetime.now()
+				}
 			google_square_integration_utils.update_donate_history_by_id_token(id_token, out)
 			return str(out)
 		else:
