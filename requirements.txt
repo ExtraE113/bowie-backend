@@ -40,6 +40,6 @@ rsa==4.6
 six==1.15.0
 squareup==6.0.0.20200625
 uritemplate==3.0.1
-urllib3==1.25.9
+urllib3==1.26.5
 watchdog==0.10.3
 Werkzeug==1.0.1
